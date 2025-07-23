@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './utils/privateRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import CreateIssuePage from './pages/ReportIssue';
 // import Dashboard from './pages/Dashboard';
 // import Home from './pages/Home';
 
@@ -14,6 +15,7 @@ const App = () => {
           {/* <Route path="/" element={<Home />} /> */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path='/createIssue' element={<CreateIssuePage />}></Route>
           {/* <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} /> */}
         </Routes>
       </BrowserRouter>
