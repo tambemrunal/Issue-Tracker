@@ -5,10 +5,10 @@ exports.createIssue = async (req, res) => {
   try {
     const { title, description, category, location, createdBy } = req.body;
 
-    // ✅ Cloudinary URL from multer-cloudinary
-    const imageUrl = req.file?.path;
+    console.log("📥 Received body:", req.body);
+    console.log("📷 Uploaded file:", req.file); // file might be undefined
 
-    console.log("Uploaded image URL:", imageUrl);
+    const imageUrl = req.file?.path;
 
     const issue = new Issue({
       title,
@@ -16,22 +16,23 @@ exports.createIssue = async (req, res) => {
       category,
       location: typeof location === "string" ? JSON.parse(location) : location,
       createdBy,
-      image: imageUrl || " ", // fallback if upload fails
+      image: imageUrl || " ",
     });
 
     await issue.save();
     res.status(201).json(issue);
   } catch (err) {
-    console.error("Error in createIssue:", err);
+    console.error("❌ Error in createIssue:", err);
     res.status(500).json({ error: "Issue creation failed" });
   }
 };
 
 
+
 exports.getAllIssues = async (req, res) => {
   try {
     const filters = req.query; // e.g., ?category=road
-    const issues = await Issue.find(filters).sort({ createdAt: -1 });
+    const issues = await Issue.find(filters).populate('createdBy', 'name').sort({ createdAt: -1 });
     res.json(issues);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch issues" });

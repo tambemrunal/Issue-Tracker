@@ -12,8 +12,12 @@ const issueSchema = new mongoose.Schema({
     address: String,
   },
   createdBy: {
-    type: String, // or ObjectId if you link to a User
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    // type: String,
+    //  // or ObjectId if you link to a User
     required: true,
+    
   },
   upvotes: {
     type: [String], // store user IDs
