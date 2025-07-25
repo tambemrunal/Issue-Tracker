@@ -83,3 +83,23 @@ exports.toggleUpvote = async (req, res) => {
   }
 };
 
+exports.updateIssueStatus= async (req, res) => {
+  const { status, remarks, estimatedFixTime } = req.body;
+
+  try {
+    const issue = await Issue.findById(req.params.id);
+    if (!issue) {
+      return res.status(404).json({ message: "Issue not found" });
+    }
+
+    if (status) issue.status = status;
+    if (remarks) issue.remarks = remarks;
+    if (estimatedFixTime) issue.estimatedFixTime = estimatedFixTime;
+
+    await issue.save();
+
+    res.status(200).json({ message: "Issue updated successfully", issue });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to update issue", error: err });
+  }
+};

@@ -13,11 +13,8 @@ const issueSchema = new mongoose.Schema({
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    // type: String,
-    //  // or ObjectId if you link to a User
+    ref: "User",
     required: true,
-    
   },
   upvotes: {
     type: [String], // store user IDs
@@ -27,6 +24,14 @@ const issueSchema = new mongoose.Schema({
     type: String,
     enum: ["pending", "in progress", "resolved", "rejected"],
     default: "pending",
+  },
+  remarks: {
+    type: String,
+    default: "",
+  },
+  estimatedFixTime: {
+    type: String, // or Date if you prefer exact date
+    default: "",
   },
 }, { timestamps: true });
 

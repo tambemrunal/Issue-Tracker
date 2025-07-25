@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, MapPin, Calendar, User, Filter,Plus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import axiosInstance from '../api/axiosInstance';
 
 
 const IssuesDisplay = () => {
@@ -31,69 +32,45 @@ console.log("currentUser ",currentUser)
   ];
 
   // Fetch issues from API
-  const fetchIssues = async (category = '') => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const url = category 
-        ? `/api/issues?category=${encodeURIComponent(category)}`
-        : '/api/issues';
-      
-      const response = await fetch(url);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      setIssues(data);
-      console.log("issues  ",data);
-    } catch (err) {
-      setError(err.message || 'Failed to fetch issues');
-      console.error('Error fetching issues:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+
+const fetchIssues = async (category = '') => {
+  try {
+    setLoading(true);
+    setError(null);
+
+    const url = category 
+      ? `/issues?category=${encodeURIComponent(category)}`
+      : '/issues';
+
+    const response = await axiosInstance.get(url); // ✅ uses token automatically
+    setIssues(response.data);
+  } catch (err) {
+    setError(err.response?.data?.message || err.message || 'Failed to fetch issues');
+    console.error('Error fetching issues:', err);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // Toggle upvote
   const toggleUpvote = async (issueId) => {
-    try {
-      const response = await fetch(`/api/issues/${issueId}/upvote`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId: currentUser }),
-        // Add authentication headers if needed
-        // 'Authorization': `Bearer ${token}`
-      });
+  try {
+    const response = await axiosInstance.patch(`/issues/${issueId}/upvote`, {
+      userId: currentUser,
+    });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+    const updatedIssue = response.data;
 
-      // Update local state
-      setIssues(prevIssues => 
-        prevIssues.map(issue => {
-          if (issue._id === issueId) {
-            const hasUpvoted = issue.upvotes.includes(currentUser);
-            return {
-              ...issue,
-              upvotes: hasUpvoted 
-                ? issue.upvotes.filter(id => id !== currentUser)
-                : [...issue.upvotes, currentUser]
-            };
-          }
-          return issue;
-        })
-      );
-    } catch (err) {
-      console.error('Error toggling upvote:', err);
-      // You could show a toast notification here
-    }
-  };
+    // Update local state
+    setIssues(prevIssues => 
+      prevIssues.map(issue => issue._id === updatedIssue._id ? updatedIssue : issue)
+    );
+  } catch (err) {
+    console.error('Error toggling upvote:', err);
+  }
+};
+
 
   // Toggle read more/less
   const toggleExpanded = (issueId) => {
