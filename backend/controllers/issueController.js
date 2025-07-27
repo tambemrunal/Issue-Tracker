@@ -5,9 +5,6 @@ exports.createIssue = async (req, res) => {
   try {
     const { title, description, category, location, createdBy } = req.body;
 
-    console.log("📥 Received body:", req.body);
-    console.log("📷 Uploaded file:", req.file); // file might be undefined
-
     const imageUrl = req.file?.path;
 
     const issue = new Issue({

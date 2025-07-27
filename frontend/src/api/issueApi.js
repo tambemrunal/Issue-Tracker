@@ -44,3 +44,16 @@ export const createIssue = async ({
     throw error;
   }
 };
+
+// src/api/issueApi.js
+
+export const fetchIssueById = async (id) => {
+  try {
+    const response = await fetch(`/api/issues/${id}`);
+    if (!response.ok) throw new Error("Failed to fetch issue");
+    return await response.json();
+  } catch (error) {
+    console.error("API Error - fetchIssueById:", error);
+    throw error;
+  }
+};
