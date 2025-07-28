@@ -1,4 +1,5 @@
 // src/api/issueApi.js
+import axiosInstance from "./axiosInstance";
 
 export const createIssue = async ({
   title,
@@ -28,17 +29,13 @@ export const createIssue = async ({
       formData.append("image", imageFile);
     }
 
-    const response = await fetch("/api/issues", {
-      method: "POST",
-      body: formData,
+    const response = await axiosInstance.post("/issues", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
 
-    if (!response.ok) {
-      throw new Error("Issue creation failed");
-    }
-
-    const data = await response.json();
-    return data;
+    return response.data;
   } catch (error) {
     console.error("API Error - createIssue:", error);
     throw error;
@@ -49,9 +46,12 @@ export const createIssue = async ({
 
 export const fetchIssueById = async (id) => {
   try {
-    const response = await fetch(`/api/issues/${id}`);
-    if (!response.ok) throw new Error("Failed to fetch issue");
-    return await response.json();
+    const response = await axiosInstance.get(`/issues/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
   } catch (error) {
     console.error("API Error - fetchIssueById:", error);
     throw error;

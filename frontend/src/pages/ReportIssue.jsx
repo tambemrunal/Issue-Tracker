@@ -84,16 +84,16 @@ const CreateIssuePage = () => {
     const { address, pincode } = manualAddress;
     const fullAddress = `${address}, ${pincode}`;
 
-    if (!address || !pincode) {
-      setLocationError("Please enter both address and pincode.");
-      return;
-    }
+    // if (!address || !pincode) {
+    //   setLocationError("Please enter both address and pincode.");
+    //   return;
+    // }
 
     setLoadingLocation(true);
     setLocationError("");
 
     try {
-      const res = await fetch("/api/geocode", {
+      const res = await fetch("http://localhost:5000/api/geocode", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

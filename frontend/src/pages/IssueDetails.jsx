@@ -3,10 +3,13 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchIssueById } from "../api/issueApi";
 import MapView from "../components/MapView";
+import { useAuth } from "../context/AuthContext";
 
 const IssueDetails = () => {
   const { id } = useParams();
+  console.log(id);
   const navigate = useNavigate();
+  const {user} = useAuth();
 
   const [issue, setIssue] = useState(null);
   const [error, setError] = useState("");
